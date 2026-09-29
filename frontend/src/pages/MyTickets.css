@@ -1,0 +1,105 @@
+.ticketsPage {
+    width: 100%;
+}
+
+.ticketsTop {
+    margin-bottom: 28px;
+}
+
+.ticketsTop h1 {
+    margin: 0;
+    font-size: 28px;
+    color: #2f3a4a;
+}
+
+.ticketsTop p {
+    margin: 6px 0 0;
+    color: #8a97a6;
+    font-size: 14px;
+}
+
+.ticketList {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.ticketCard {
+    display: grid;
+    grid-template-columns: 1fr 130px 110px 110px;
+    align-items: center;
+    gap: 18px;
+
+    padding: 18px 20px;
+
+    background: #ffffff;
+    border: 1px solid #e5edf5;
+    border-radius: 14px;
+}
+
+.ticketMain {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.ticketNum {
+    min-width: 44px;
+
+    padding: 8px;
+
+    text-align: center;
+
+    background: #edf6ff;
+    color: #4d9fe6;
+
+    border-radius: 9px;
+
+    font-size: 13px;
+}
+
+.ticketMain h3 {
+    margin: 0 0 5px;
+
+    color: #2f3a4a;
+    font-size: 16px;
+}
+
+.ticketMain p {
+    margin: 0;
+
+    color: #8a97a6;
+    font-size: 13px;
+}
+
+.ticketDate,
+.ticketPriority {
+    color: #687787;
+    font-size: 13px;
+}
+
+.ticketStatus {
+    padding: 7px 10px;
+
+    text-align: center;
+
+    border-radius: 8px;
+
+    font-size: 12px;
+}
+
+.ticketStatus.NEW {
+    background: #eaf4ff;
+    color: #438fce;
+}
+
+.emptyTickets {
+    padding: 30px;
+
+    background: #ffffff;
+    border: 1px solid #e5edf5;
+    border-radius: 14px;
+
+    color: #8a97a6;
+    text-align: center;
+}

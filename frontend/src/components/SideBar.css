@@ -1,0 +1,119 @@
+.sideBar {
+    width: 240px;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+
+    padding: 28px 18px;
+
+    background: #ffffff;
+    border-right: 1px solid #e5edf5;
+}
+
+.sideBar h2 {
+    margin: 0 0 40px 14px;
+
+    color: #4d9fe6;
+    font-size: 24px;
+}
+
+.sideBar nav {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.sideBar nav a {
+    padding: 12px 14px;
+
+    border-radius: 10px;
+    color: #687787;
+}
+
+.sideBar nav a:hover {
+    background: #edf6ff;
+    color: #4d9fe6;
+}
+
+.sideBar nav a.active {
+    background: #e2f1ff;
+    color: #378fdc;
+}
+.userBlock {
+    margin-top: 34px;
+    padding: 14px;
+
+    background: #f5f9fd;
+    border: 1px solid #e1ebf4;
+    border-radius: 14px;
+}
+
+.userIcon {
+    width: 38px;
+    height: 38px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 10px;
+
+    background: #dceeff;
+    color: #4d9fe6;
+
+    border-radius: 50%;
+
+    font-size: 17px;
+    font-weight: 600;
+}
+
+.userInfo {
+    margin-bottom: 12px;
+}
+
+.userName {
+    margin: 0 0 3px;
+    color: #2f3a4a;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.userInfo span {
+    color: #8a97a6;
+    font-size: 11px;
+}
+
+.logoutBtn,
+.loginOpenBtn {
+    width: 100%;
+
+    padding: 9px 12px;
+
+    border: none;
+    border-radius: 9px;
+
+    cursor: pointer;
+}
+
+.logoutBtn {
+    background: #ffffff;
+    border: 1px solid #dce6ef;
+    color: #687787;
+}
+
+.logoutBtn:hover {
+    background: #edf6ff;
+    color: #4d9fe6;
+}
+
+.loginOpenBtn {
+    margin-top: 34px;
+
+    background: #5aa9e6;
+    color: #ffffff;
+}
+
+.loginOpenBtn:hover {
+    background: #4898d8;
+}
