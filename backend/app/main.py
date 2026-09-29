@@ -3,7 +3,7 @@ import bcrypt
 import jwt
 from fastapi import FastAPI, HTTPException, Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-
+from fastapi.middleware.cors import CORSMiddleware
 from .database import dbSess
 from .models import User, Ticket, Category
 from .TicketData import TicketAdd
@@ -13,7 +13,13 @@ from .config import sett
 app = FastAPI(
     title="WebHub API"
 )
-
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"]
+)
 #get
 
 @app.get("/api/health")
