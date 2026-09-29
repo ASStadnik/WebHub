@@ -7,6 +7,7 @@ class Sett(BaseSettings):
     dbName: str
     dbUser: str
     dbPass: str
+    jwtKey: str
 
     model_config = SettingsConfigDict(
         env_file=".env",
