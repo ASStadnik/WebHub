@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from .database import dbSess
 from .models import User, Ticket, Category
 from .TicketData import TicketAdd
-from .UserData import UserReg, UserLog
+from .UserData import UserReg, UserLog, PassChange
 from datetime import datetime, timedelta, timezone
 from .config import sett
 app = FastAPI(
@@ -46,6 +46,77 @@ def checkToken(auth: HTTPAuthorizationCredentials = Depends(security)):
             detail="Неверный токен"
         )
 
+@app.delete("/api/tickets/{ticketId}")
+def deleteTicket(ticketId: int, userData = Depends(checkToken)):
+    sess = dbSess()
+
+    ticket = sess.query(Ticket).filter(
+        Ticket.id == ticketId,
+        Ticket.userId == userData["id"]
+    ).first()
+
+    if ticket is None:
+        sess.close()
+        raise HTTPException(
+            status_code=404,
+            detail="Заявка не найдена"
+        )
+
+    if ticket.status != "NEW":
+        sess.close()
+        raise HTTPException(
+            status_code=400,
+            detail="Можно удалить только новую заявку"
+        )
+
+    sess.delete(ticket)
+    sess.commit()
+    sess.close()
+
+    return {
+        "message": "Заявка удалена"
+    }
+
+@app.patch("/api/password")
+def changePass(data: PassChange, userData = Depends(checkToken)):
+    sess = dbSess()
+
+    user = sess.query(User).filter(
+        User.id == userData["id"]
+    ).first()
+
+    if user is None:
+        sess.close()
+        raise HTTPException(
+            status_code=404,
+            detail="Пользователь не найден"
+        )
+
+    oldOk = bcrypt.checkpw(
+        data.oldPass.encode("utf-8"),
+        user.passHash.encode("utf-8")
+    )
+
+    if not oldOk:
+        sess.close()
+        raise HTTPException(
+            status_code=400,
+            detail="Старый пароль неверный"
+        )
+
+    newHash = bcrypt.hashpw(
+        data.newPass.encode("utf-8"),
+        bcrypt.gensalt()
+    ).decode("utf-8")
+
+    user.passHash = newHash
+
+    sess.commit()
+    sess.close()
+
+    return {
+        "message": "Пароль изменён"
+    }
 
 @app.get("/api/me")
 def getMe(data = Depends(checkToken)):

@@ -1,0 +1,109 @@
+.passBack {
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100%;
+
+    background: rgba(30, 45, 65, 0.35);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    z-index: 1000;
+}
+
+.passModal {
+    width: 390px;
+    padding: 34px 40px;
+
+    background: white;
+    border-radius: 20px;
+
+    position: relative;
+
+    box-shadow: 0 10px 35px rgba(40, 70, 100, 0.15);
+}
+
+.passModal h2 {
+    margin: 0 0 8px;
+
+    color: #4b9be2;
+    font-size: 30px;
+}
+
+.passModal p {
+    margin-bottom: 28px;
+
+    color: #8b9bad;
+    font-size: 16px;
+}
+
+.passModal input {
+    width: 100%;
+    padding: 14px 16px;
+    margin-bottom: 14px;
+
+    box-sizing: border-box;
+
+    border: 1px solid #d5e2ef;
+    border-radius: 12px;
+
+    background: #f8fbff;
+    color: #2f3a4a;
+
+    font-size: 16px;
+    outline: none;
+}
+
+.passModal input:focus {
+    border-color: #5aa9e6;
+}
+
+.passBtn {
+    width: 100%;
+    padding: 13px;
+
+    margin-top: 4px;
+
+    border: none;
+    border-radius: 12px;
+
+    background: #5aa9e6;
+    color: white;
+
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.passBtn:hover {
+    background: #4b9be2;
+}
+
+.passClose {
+    position: absolute;
+    top: 16px;
+    right: 18px;
+
+    border: none;
+    background: none;
+
+    color: #8998a8;
+    font-size: 25px;
+
+    cursor: pointer;
+}
+
+.passMsg {
+    margin-top: 16px;
+    padding: 10px;
+
+    text-align: center;
+
+    border-radius: 10px;
+
+    background: #eaf4ff;
+    color: #458dc9;
+}

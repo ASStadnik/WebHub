@@ -117,3 +117,22 @@
 .loginOpenBtn:hover {
     background: #4898d8;
 }
+.changePassBtn {
+    width: 100%;
+    padding: 10px 12px;
+    margin-top: 14px;
+    margin-bottom: 8px;
+
+    border: 1px solid #cfe0f2;
+    border-radius: 10px;
+
+    background: #eaf4ff;
+    color: #3f8fd2;
+
+    font-size: 15px;
+    cursor: pointer;
+}
+
+.changePassBtn:hover {
+    background: #dceeff;
+}

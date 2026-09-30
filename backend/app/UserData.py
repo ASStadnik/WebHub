@@ -9,3 +9,7 @@ class UserReg(BaseModel):
 class UserLog(BaseModel):
     login: str
     userPass: str
+
+class PassChange(BaseModel):
+    oldPass: str
+    newPass: str

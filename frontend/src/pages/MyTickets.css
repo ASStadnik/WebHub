@@ -103,3 +103,15 @@
     color: #8a97a6;
     text-align: center;
 }
+.deleteTicketBtn {
+    padding: 8px 12px;
+    border: 1px solid #e2b8b8;
+    border-radius: 9px;
+    background: white;
+    color: #c85b5b;
+    cursor: pointer;
+}
+
+.deleteTicketBtn:hover {
+    background: #fff3f3;
+}

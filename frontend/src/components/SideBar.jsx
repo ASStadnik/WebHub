@@ -2,11 +2,11 @@ import { useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import LoginModal from './LoginModal.jsx'
 import './SideBar.css'
-
+import ChangePassModal from './ChangePassModal.jsx'
 
 function SideBar({ user, setUser }) {
     const [showLogin, setShowLogin] = useState(false)
-
+    const [showPass, setShowPass] = useState(false)
     function logout() {
     localStorage.removeItem('token')
     localStorage.removeItem('user')
@@ -35,6 +35,13 @@ function SideBar({ user, setUser }) {
                         <p className="userName">{user.name}</p>
                         <span>{user.role}</span>
                     </div>
+                    <button
+                        type="button"
+                        className="changePassBtn"
+                        onClick={() => setShowPass(true)}
+                    >
+                        Сменить пароль
+                    </button>
 
                     <button
                         type="button"
@@ -43,6 +50,11 @@ function SideBar({ user, setUser }) {
                     >
                         Выйти
                     </button>
+                    {showPass && (
+                        <ChangePassModal
+                            close={() => setShowPass(false)}
+                        />
+                    )}
                 </div>
             ) : (
                 <button
