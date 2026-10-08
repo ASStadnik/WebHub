@@ -264,3 +264,103 @@
 .adminAddBtn:hover {
     background: #4b9be2;
 }
+.adminCommentsBtn {
+    margin-top: 18px;
+    padding: 10px 16px;
+
+    border: 1px solid #bcd9f3;
+    border-radius: 10px;
+
+    background: #eaf4ff;
+    color: #438fd0;
+
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.adminCommentsBtn:hover {
+    background: #dceeff;
+}
+
+.adminComments {
+    margin-top: 16px;
+    padding-top: 18px;
+
+    border-top: 1px solid #e5edf5;
+}
+
+.adminComment {
+    margin-bottom: 12px;
+    padding: 12px 14px;
+
+    background: #f8fbff;
+    border-radius: 10px;
+}
+
+.adminComment.ADMIN {
+    background: #eef6ff;
+}
+
+.adminCommentTop {
+    display: flex;
+    justify-content: space-between;
+
+    margin-bottom: 6px;
+}
+
+.adminCommentTop span,
+.adminComment small {
+    color: #8b9bad;
+    font-size: 13px;
+}
+
+.adminComment p {
+    margin: 6px 0;
+    color: #46586b;
+}
+
+.adminNoComments {
+    color: #8b9bad;
+}
+
+.adminCommentAdd {
+    display: flex;
+    gap: 10px;
+
+    margin-top: 16px;
+}
+
+.adminCommentAdd textarea {
+    flex: 1;
+    min-height: 70px;
+
+    padding: 12px 14px;
+
+    border: 1px solid #d5e2ef;
+    border-radius: 10px;
+
+    resize: vertical;
+    font-size: 15px;
+    outline: none;
+}
+
+.adminCommentAdd textarea:focus {
+    border-color: #5aa9e6;
+}
+
+.adminCommentAdd button {
+    padding: 0 20px;
+
+    border: none;
+    border-radius: 10px;
+
+    background: #5aa9e6;
+    color: white;
+
+    font-size: 15px;
+    cursor: pointer;
+}
+
+.adminCommentAdd button:hover {
+    background: #4b9be2;
+}

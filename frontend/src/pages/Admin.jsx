@@ -8,6 +8,10 @@ function Admin() {
     const [users, setUsers] = useState([])
     const [showAddUser, setShowAddUser] = useState(false)
     const [section, setSection] = useState('tickets')
+    const [openTicketId, setOpenTicketId] = useState(null)
+    const [comments, setComments] = useState([])
+    const [commentText, setCommentText] = useState('')
+
 
     useEffect(() => {
         const token = localStorage.getItem('token')
@@ -36,6 +40,7 @@ function Admin() {
                 setTickets([])
             })
 
+
         fetch('http://127.0.0.1:8000/api/admin/users', {
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -55,6 +60,7 @@ function Admin() {
                 console.log(err)
                 setUsers([])
             })
+
     }, [])
 
 
@@ -136,6 +142,8 @@ function Admin() {
                 alert(err.message)
             })
     }
+
+
     function loadUsers() {
         const token = localStorage.getItem('token')
 
@@ -160,6 +168,87 @@ function Admin() {
     }
 
 
+    function openComments(ticketId) {
+        if (openTicketId === ticketId) {
+            setOpenTicketId(null)
+            setComments([])
+            setCommentText('')
+            return
+        }
+
+        const token = localStorage.getItem('token')
+
+        fetch(`http://127.0.0.1:8000/api/tickets/${ticketId}/comments`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error('Ошибка загрузки комментариев')
+                }
+
+                return res.json()
+            })
+            .then(data => {
+                setComments(data)
+                setOpenTicketId(ticketId)
+                setCommentText('')
+            })
+            .catch(err => {
+                alert(err.message)
+            })
+    }
+
+
+    function addComment(ticketId) {
+        if (!commentText.trim()) {
+            return
+        }
+
+        const token = localStorage.getItem('token')
+
+        fetch(`http://127.0.0.1:8000/api/tickets/${ticketId}/comments`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                text: commentText
+            })
+        })
+            .then(res => {
+                if (!res.ok) {
+                    return res.json().then(data => {
+                        throw new Error(data.detail)
+                    })
+                }
+
+                return res.json()
+            })
+            .then(() => {
+                setCommentText('')
+
+                return fetch(
+                    `http://127.0.0.1:8000/api/tickets/${ticketId}/comments`,
+                    {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    }
+                )
+            })
+            .then(res => res.json())
+            .then(data => {
+                setComments(data)
+            })
+            .catch(err => {
+                alert(err.message || 'Ошибка добавления комментария')
+            })
+    }
+
+
     return (
         <div className="adminPage">
 
@@ -169,10 +258,16 @@ function Admin() {
                 </div>
             </div>
 
+
             <div className="adminMenu">
+
                 <button
                     type="button"
-                    className={section === 'tickets' ? 'adminMenuBtn active' : 'adminMenuBtn'}
+                    className={
+                        section === 'tickets'
+                            ? 'adminMenuBtn active'
+                            : 'adminMenuBtn'
+                    }
                     onClick={() => setSection('tickets')}
                 >
                     Все заявки
@@ -180,20 +275,25 @@ function Admin() {
 
                 <button
                     type="button"
-                    className={section === 'users' ? 'adminMenuBtn active' : 'adminMenuBtn'}
+                    className={
+                        section === 'users'
+                            ? 'adminMenuBtn active'
+                            : 'adminMenuBtn'
+                    }
                     onClick={() => setSection('users')}
                 >
                     Пользователи
                 </button>
 
-               <button
+                <button
                     type="button"
                     className="adminAddBtn"
                     onClick={() => setShowAddUser(true)}
                 >
                     + Создать пользователя
-               </button>
-                </div>
+                </button>
+
+            </div>
 
 
             {section === 'tickets' && (
@@ -205,12 +305,14 @@ function Admin() {
                         </div>
                     ) : (
                         tickets.map(ticket => (
+
                             <div
                                 className="adminTicket"
                                 key={ticket.id}
                             >
 
                                 <div className="adminTicketHead">
+
                                     <div>
                                         <span className="adminTicketNum">
                                             #{ticket.id}
@@ -228,11 +330,14 @@ function Admin() {
                                         {ticket.status === 'IN_PROGRESS' && 'В работе'}
                                         {ticket.status === 'DONE' && 'Выполнена'}
                                     </div>
+
                                 </div>
+
 
                                 <p className="adminTicketText">
                                     {ticket.text}
                                 </p>
+
 
                                 <div className="adminTicketInfo">
 
@@ -264,6 +369,7 @@ function Admin() {
                                     </span>
 
                                 </div>
+
 
                                 <div className="adminControls">
 
@@ -322,6 +428,86 @@ function Admin() {
 
                                 </div>
 
+
+                                <button
+                                    type="button"
+                                    className="adminCommentsBtn"
+                                    onClick={() => openComments(ticket.id)}
+                                >
+                                    {openTicketId === ticket.id
+                                        ? 'Скрыть комментарии'
+                                        : 'Комментарии'}
+                                </button>
+
+
+                                {openTicketId === ticket.id && (
+                                    <div className="adminComments">
+
+                                        {comments.length === 0 ? (
+                                            <p className="adminNoComments">
+                                                Комментариев пока нет
+                                            </p>
+                                        ) : (
+                                            comments.map(comment => (
+
+                                                <div
+                                                    className={`adminComment ${comment.userRole}`}
+                                                    key={comment.id}
+                                                >
+
+                                                    <div className="adminCommentTop">
+
+                                                        <b>
+                                                            {comment.userName}
+                                                        </b>
+
+                                                        <span>
+                                                            {comment.userRole === 'ADMIN'
+                                                                ? 'Администратор'
+                                                                : 'Пользователь'}
+                                                        </span>
+
+                                                    </div>
+
+                                                    <p>
+                                                        {comment.text}
+                                                    </p>
+
+                                                    <small>
+                                                        {new Date(
+                                                            comment.createdAt
+                                                        ).toLocaleString('ru-RU')}
+                                                    </small>
+
+                                                </div>
+                                            ))
+                                        )}
+
+
+                                        <div className="adminCommentAdd">
+
+                                            <textarea
+                                                placeholder="Ответить пользователю..."
+                                                value={commentText}
+                                                onChange={(e) =>
+                                                    setCommentText(e.target.value)
+                                                }
+                                            />
+
+                                            <button
+                                                type="button"
+                                                onClick={() =>
+                                                    addComment(ticket.id)
+                                                }
+                                            >
+                                                Отправить
+                                            </button>
+
+                                        </div>
+
+                                    </div>
+                                )}
+
                             </div>
                         ))
                     )}
@@ -343,10 +529,12 @@ function Admin() {
                             </div>
                         ) : (
                             users.map(user => (
+
                                 <div
                                     className="adminUserCard"
                                     key={user.id}
                                 >
+
                                     <div>
                                         <p className="adminUserName">
                                             {user.name}
@@ -364,6 +552,7 @@ function Admin() {
                                             ? 'Администратор'
                                             : 'Пользователь'}
                                     </div>
+
                                 </div>
                             ))
                         )}
@@ -383,7 +572,6 @@ function Admin() {
         </div>
     )
 }
-
 
 
 export default Admin

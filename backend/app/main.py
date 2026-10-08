@@ -5,11 +5,12 @@ from fastapi import FastAPI, HTTPException, Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi.middleware.cors import CORSMiddleware
 from .database import dbSess
-from .models import User, Ticket, Category
+from .models import User, Category, Ticket, Comment
 from .TicketData import TicketAdd, TicketStatus, TicketPriority
 from .UserData import UserReg, UserLog, PassChange
 from datetime import datetime, timedelta, timezone
 from .config import sett
+from .CommentData import CommentAdd
 app = FastAPI(
     title="WebHub API"
 )
@@ -220,6 +221,104 @@ def getAdminUsers(userData = Depends(checkAdmin)):
             "name": user.name,
             "login": user.login,
             "role": user.role
+        })
+
+    sess.close()
+
+    return result
+
+@app.post("/api/tickets/{ticketId}/comments")
+def addComment(
+    ticketId: int,
+    data: CommentAdd,
+    userData = Depends(checkToken)
+):
+    sess = dbSess()
+
+    ticket = sess.query(Ticket).filter(
+        Ticket.id == ticketId
+    ).first()
+
+    if ticket is None:
+        sess.close()
+        raise HTTPException(
+            status_code=404,
+            detail="Заявка не найдена"
+        )
+
+    if userData["role"] != "ADMIN" and ticket.userId != userData["id"]:
+        sess.close()
+        raise HTTPException(
+            status_code=403,
+            detail="Нет доступа"
+        )
+
+    if not data.text.strip():
+        sess.close()
+        raise HTTPException(
+            status_code=400,
+            detail="Комментарий пустой"
+        )
+
+    comment = Comment(
+        ticketId=ticketId,
+        userId=userData["id"],
+        text=data.text
+    )
+
+    sess.add(comment)
+    sess.commit()
+    sess.close()
+
+    return {
+        "message": "Комментарий добавлен"
+    }
+
+@app.get("/api/tickets/{ticketId}/comments")
+def getComments(
+    ticketId: int,
+    userData = Depends(checkToken)
+):
+    sess = dbSess()
+
+    ticket = sess.query(Ticket).filter(
+        Ticket.id == ticketId
+    ).first()
+
+    if ticket is None:
+        sess.close()
+        raise HTTPException(
+            status_code=404,
+            detail="Заявка не найдена"
+        )
+
+    if userData["role"] != "ADMIN" and ticket.userId != userData["id"]:
+        sess.close()
+        raise HTTPException(
+            status_code=403,
+            detail="Нет доступа"
+        )
+
+    comments = sess.query(Comment).filter(
+        Comment.ticketId == ticketId
+    ).order_by(
+        Comment.createdAt
+    ).all()
+
+    result = []
+
+    for comment in comments:
+        user = sess.query(User).filter(
+            User.id == comment.userId
+        ).first()
+
+        result.append({
+            "id": comment.id,
+            "userId": comment.userId,
+            "userName": user.name,
+            "userRole": user.role,
+            "text": comment.text,
+            "createdAt": comment.createdAt
         })
 
     sess.close()

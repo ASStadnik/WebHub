@@ -115,3 +115,105 @@
 .deleteTicketBtn:hover {
     background: #fff3f3;
 }
+
+.commentsBtn {
+    padding: 8px 12px;
+
+    border: 1px solid #bcd9f3;
+    border-radius: 9px;
+
+    background: #eaf4ff;
+    color: #438fd0;
+
+    cursor: pointer;
+}
+
+.commentsBtn:hover {
+    background: #dceeff;
+}
+
+.ticketComments {
+    grid-column: 1 / -1;
+
+    margin-top: 10px;
+    padding-top: 16px;
+
+    border-top: 1px solid #e5edf5;
+}
+
+.commentItem {
+    margin-bottom: 12px;
+    padding: 12px 14px;
+
+    background: #f8fbff;
+    border-radius: 10px;
+}
+
+.commentItem.ADMIN {
+    background: #eef6ff;
+}
+
+.commentTop {
+    display: flex;
+    justify-content: space-between;
+
+    margin-bottom: 6px;
+}
+
+.commentTop span,
+.commentItem small {
+    color: #8b9bad;
+    font-size: 13px;
+}
+
+.commentItem p {
+    margin: 6px 0;
+    color: #46586b;
+}
+
+.noComments {
+    color: #8b9bad;
+}
+
+.commentAdd {
+    display: flex;
+    gap: 10px;
+
+    margin-top: 16px;
+}
+
+.commentAdd textarea {
+    flex: 1;
+    min-height: 70px;
+
+    padding: 12px 14px;
+
+    border: 1px solid #d5e2ef;
+    border-radius: 10px;
+
+    resize: vertical;
+
+    font-size: 15px;
+    outline: none;
+}
+
+.commentAdd textarea:focus {
+    border-color: #5aa9e6;
+}
+
+.commentAdd button {
+    padding: 0 20px;
+
+    border: none;
+    border-radius: 10px;
+
+    background: #5aa9e6;
+    color: white;
+
+    font-size: 15px;
+    cursor: pointer;
+}
+
+.commentAdd button:hover {
+    background: #4b9be2;
+}
