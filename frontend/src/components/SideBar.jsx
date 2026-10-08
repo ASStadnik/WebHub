@@ -23,6 +23,11 @@ function SideBar({ user, setUser }) {
                 <NavLink to="/">Главная</NavLink>
                 <NavLink to="/create">Создать заявку</NavLink>
                 <NavLink to="/tickets">Мои заявки</NavLink>
+                {user?.role === 'ADMIN' && (
+                <NavLink to="/admin">
+                    Админ-панель
+                </NavLink>
+            )}
             </nav>
 
             {user ? (
@@ -65,6 +70,7 @@ function SideBar({ user, setUser }) {
                     Войти
                 </button>
             )}
+
 
             {showLogin && (
                 <LoginModal

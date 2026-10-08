@@ -6,3 +6,9 @@ class TicketAdd(BaseModel):
     title: str
     text: str
     priority: str
+
+class TicketStatus(BaseModel):
+    status: str
+
+class TicketPriority(BaseModel):
+    priority: str

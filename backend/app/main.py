@@ -6,7 +6,7 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi.middleware.cors import CORSMiddleware
 from .database import dbSess
 from .models import User, Ticket, Category
-from .TicketData import TicketAdd
+from .TicketData import TicketAdd, TicketStatus, TicketPriority
 from .UserData import UserReg, UserLog, PassChange
 from datetime import datetime, timedelta, timezone
 from .config import sett
@@ -45,6 +45,186 @@ def checkToken(auth: HTTPAuthorizationCredentials = Depends(security)):
             status_code=401,
             detail="Неверный токен"
         )
+
+
+def checkAdmin(userData = Depends(checkToken)):
+    if userData["role"] != "ADMIN":
+        raise HTTPException(
+            status_code=403,
+            detail="Нет доступа"
+        )
+
+    return userData
+
+#Админские запросы
+@app.get("/api/admin/test")
+def adminTest(userData = Depends(checkAdmin)):
+    return {
+        "message": "Доступ администратора разрешён"
+    }
+
+@app.get("/api/admin/tickets")
+def getAdminTickets(userData = Depends(checkAdmin)):
+    sess = dbSess()
+
+    tickets = sess.query(Ticket).order_by(
+        Ticket.createdAt.desc()
+    ).all()
+
+    result = []
+
+    for ticket in tickets:
+        user = sess.query(User).filter(
+            User.id == ticket.userId
+        ).first()
+
+        category = sess.query(Category).filter(
+            Category.id == ticket.categoryId
+        ).first()
+
+        result.append({
+            "id": ticket.id,
+            "userId": ticket.userId,
+            "userName": user.name,
+            "userLogin": user.login,
+            "categoryId": ticket.categoryId,
+            "category": category.name,
+            "title": ticket.title,
+            "text": ticket.text,
+            "status": ticket.status,
+            "priority": ticket.priority,
+            "createdAt": ticket.createdAt
+        })
+
+    sess.close()
+
+    return result
+
+@app.patch("/api/admin/tickets/{ticketId}/status")
+def changeTicketStatus(
+    ticketId: int,
+    data: TicketStatus,
+    userData = Depends(checkAdmin)
+):
+    if data.status not in ["NEW", "IN_PROGRESS", "DONE"]:
+        raise HTTPException(
+            status_code=400,
+            detail="Неверный статус"
+        )
+
+    sess = dbSess()
+
+    ticket = sess.query(Ticket).filter(
+        Ticket.id == ticketId
+    ).first()
+
+    if ticket is None:
+        sess.close()
+        raise HTTPException(
+            status_code=404,
+            detail="Заявка не найдена"
+        )
+
+    ticket.status = data.status
+
+    sess.commit()
+    sess.close()
+
+    return {
+        "message": "Статус изменён"
+    }
+
+@app.patch("/api/admin/tickets/{ticketId}/priority")
+def changeTicketPriority(
+    ticketId: int,
+    data: TicketPriority,
+    userData = Depends(checkAdmin)
+):
+    if data.priority not in ["LOW", "NORMAL", "HIGH"]:
+        raise HTTPException(
+            status_code=400,
+            detail="Неверный приоритет"
+        )
+
+    sess = dbSess()
+
+    ticket = sess.query(Ticket).filter(
+        Ticket.id == ticketId
+    ).first()
+
+    if ticket is None:
+        sess.close()
+        raise HTTPException(
+            status_code=404,
+            detail="Заявка не найдена"
+        )
+
+    ticket.priority = data.priority
+
+    sess.commit()
+    sess.close()
+
+    return {
+        "message": "Приоритет изменён"
+    }
+
+@app.post("/api/admin/users")
+def addUser(data: UserReg, userData = Depends(checkAdmin)):
+    sess = dbSess()
+
+    oldUser = sess.query(User).filter(
+        User.login == data.login
+    ).first()
+
+    if oldUser is not None:
+        sess.close()
+        raise HTTPException(
+            status_code=400,
+            detail="Такой логин уже существует"
+        )
+
+    passHash = bcrypt.hashpw(
+        data.userPass.encode("utf-8"),
+        bcrypt.gensalt()
+    ).decode("utf-8")
+
+    user = User(
+        name=data.name,
+        login=data.login,
+        passHash=passHash,
+        role="USER"
+    )
+
+    sess.add(user)
+    sess.commit()
+    sess.close()
+
+    return {
+        "message": "Пользователь создан"
+    }
+
+
+@app.get("/api/admin/users")
+def getAdminUsers(userData = Depends(checkAdmin)):
+    sess = dbSess()
+
+    users = sess.query(User).order_by(
+        User.id
+    ).all()
+
+    result = []
+
+    for user in users:
+        result.append({
+            "id": user.id,
+            "name": user.name,
+            "login": user.login,
+            "role": user.role
+        })
+
+    sess.close()
+
+    return result
 
 @app.delete("/api/tickets/{ticketId}")
 def deleteTicket(ticketId: int, userData = Depends(checkToken)):
@@ -171,42 +351,6 @@ def getTickets(userData = Depends(checkToken)):
 
     return data
 
-#Регистрация пользователя
-#post
-@app.post("/api/register")
-def regUser(data: UserReg):
-    sess = dbSess()
-
-    oldUser = sess.query(User).filter(User.login == data.login).first()
-
-    if oldUser:
-        sess.close()
-        raise HTTPException(
-            status_code=400,
-            detail="Такой логин уже существует"
-        )
-
-    passHash = bcrypt.hashpw(
-        data.userPass.encode("utf-8"),
-        bcrypt.gensalt()
-    ).decode("utf-8")
-
-    newUser = User(
-        name=data.name,
-        login=data.login,
-        passHash=passHash,
-        role="USER"
-    )
-
-    sess.add(newUser)
-    sess.commit()
-    sess.refresh(newUser)
-    sess.close()
-
-    return {
-        "message": "Пользователь создан",
-        "id": newUser.id
-    }
 
 #Вход пользователя
 @app.post("/api/login")
