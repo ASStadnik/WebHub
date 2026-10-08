@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, Navigate } from 'react-router-dom'
 import { useState } from 'react'
 import './App.css'
 
@@ -28,7 +28,14 @@ function App() {
                     <Route path="/" element={<Home user={user} />} />
                     <Route path="/create" element={<CreateTicket />} />
                     <Route path="/tickets" element={<MyTickets />} />
-                    <Route path="/admin" element={<Admin />} />
+                    <Route
+                        path="/admin"
+                        element={
+                            user?.role === 'ADMIN'
+                                ? <Admin />
+                                : <Navigate to="/" />
+                        }
+                    />
                 </Routes>
             </main>
         </div>
