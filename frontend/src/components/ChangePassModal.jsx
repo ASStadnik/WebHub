@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import './ChangePassModal.css'
+import { apiFetch } from '../api.js'
 
 
 function ChangePassModal({ close }) {
@@ -25,7 +26,7 @@ function ChangePassModal({ close }) {
         return
     }
 
-    fetch('http://127.0.0.1:8000/api/password', {
+    apiFetch('http://127.0.0.1:8000/api/password', {
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json',

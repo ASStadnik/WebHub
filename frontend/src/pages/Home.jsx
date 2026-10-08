@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import './Home.css'
-
+import { apiFetch } from '../api.js'
 
 function Home({ user }) {
     const [tickets, setTickets] = useState([])
@@ -13,7 +13,7 @@ function Home({ user }) {
             return
         }
 
-        fetch('http://127.0.0.1:8000/api/tickets', {
+        apiFetch('http://127.0.0.1:8000/api/tickets', {
             headers: {
                 'Authorization': `Bearer ${token}`
             }

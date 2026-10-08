@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import './MyTickets.css'
+import { apiFetch } from '../api.js'
 
 
 function MyTickets() {
@@ -15,7 +16,7 @@ function MyTickets() {
             return
         }
 
-        fetch('http://127.0.0.1:8000/api/tickets', {
+        apiFetch('http://127.0.0.1:8000/api/tickets', {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
@@ -46,7 +47,7 @@ function MyTickets() {
 
         const token = localStorage.getItem('token')
 
-        fetch(`http://127.0.0.1:8000/api/tickets/${ticketId}`, {
+        apiFetch(`http://127.0.0.1:8000/api/tickets/${ticketId}`, {
             method: 'DELETE',
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -81,7 +82,7 @@ function MyTickets() {
 
         const token = localStorage.getItem('token')
 
-        fetch(`http://127.0.0.1:8000/api/tickets/${ticketId}/comments`, {
+        apiFetch(`http://127.0.0.1:8000/api/tickets/${ticketId}/comments`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
@@ -108,7 +109,7 @@ function MyTickets() {
 
     const token = localStorage.getItem('token')
 
-    fetch(`http://127.0.0.1:8000/api/tickets/${ticketId}/comments`, {
+    apiFetch(`http://127.0.0.1:8000/api/tickets/${ticketId}/comments`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -130,7 +131,7 @@ function MyTickets() {
         .then(() => {
             setCommentText('')
 
-            return fetch(
+            return apiFetch(
                 `http://127.0.0.1:8000/api/tickets/${ticketId}/comments`,
                 {
                     headers: {

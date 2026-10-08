@@ -364,3 +364,18 @@
 .adminCommentAdd button:hover {
     background: #4b9be2;
 }
+.deleteUserBtn {
+    padding: 8px 12px;
+
+    border: 1px solid #e2b8b8;
+    border-radius: 9px;
+
+    background: white;
+    color: #c85b5b;
+
+    cursor: pointer;
+}
+
+.deleteUserBtn:hover {
+    background: #fff3f3;
+}

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import './CreateTicket.css'
-
+import { apiFetch } from '../api.js'
 
 function CreateTicket() {
     const [cats, setCats] = useState([])
@@ -11,7 +11,7 @@ function CreateTicket() {
     const [msg, setMsg] = useState('')
 
     useEffect(() => {
-        fetch('http://127.0.0.1:8000/api/categories')
+        apiFetch('http://127.0.0.1:8000/api/categories')
             .then(res => res.json())
             .then(data => setCats(data))
     }, [])
@@ -30,7 +30,7 @@ function CreateTicket() {
             return
         }
 
-        fetch('http://127.0.0.1:8000/api/tickets', {
+        apiFetch('http://127.0.0.1:8000/api/tickets', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

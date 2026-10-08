@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import './AddUserModal.css'
-
+import { apiFetch } from '../api.js'
 
 function AddUserModal({ close, userAdded }) {
     const [name, setName] = useState('')
@@ -21,7 +21,7 @@ function AddUserModal({ close, userAdded }) {
         return
     }
 
-    fetch('http://127.0.0.1:8000/api/admin/users', {
+    apiFetch('http://127.0.0.1:8000/api/admin/users', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

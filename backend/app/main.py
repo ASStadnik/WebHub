@@ -58,11 +58,6 @@ def checkAdmin(userData = Depends(checkToken)):
     return userData
 
 #Админские запросы
-@app.get("/api/admin/test")
-def adminTest(userData = Depends(checkAdmin)):
-    return {
-        "message": "Доступ администратора разрешён"
-    }
 
 @app.get("/api/admin/tickets")
 def getAdminTickets(userData = Depends(checkAdmin)):
@@ -226,6 +221,58 @@ def getAdminUsers(userData = Depends(checkAdmin)):
     sess.close()
 
     return result
+
+@app.delete("/api/admin/users/{userId}")
+def deleteUser(userId: int, userData = Depends(checkAdmin)):
+    sess = dbSess()
+
+    user = sess.query(User).filter(
+        User.id == userId
+    ).first()
+
+    if user is None:
+        sess.close()
+        raise HTTPException(
+            status_code=404,
+            detail="Пользователь не найден"
+        )
+
+    if user.role == "ADMIN":
+        sess.close()
+        raise HTTPException(
+            status_code=400,
+            detail="Администратора удалить нельзя"
+        )
+
+    ticket = sess.query(Ticket).filter(
+        Ticket.userId == userId
+    ).first()
+
+    if ticket is not None:
+        sess.close()
+        raise HTTPException(
+            status_code=400,
+            detail="Нельзя удалить пользователя, у которого есть заявки"
+        )
+
+    comment = sess.query(Comment).filter(
+        Comment.userId == userId
+    ).first()
+
+    if comment is not None:
+        sess.close()
+        raise HTTPException(
+            status_code=400,
+            detail="Нельзя удалить пользователя, у которого есть комментарии"
+        )
+
+    sess.delete(user)
+    sess.commit()
+    sess.close()
+
+    return {
+        "message": "Пользователь удалён"
+    }
 
 @app.post("/api/tickets/{ticketId}/comments")
 def addComment(

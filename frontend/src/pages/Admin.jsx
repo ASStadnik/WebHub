@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import './Admin.css'
 import AddUserModal from '../components/AddUserModal.jsx'
-
+import { apiFetch } from '../api.js'
 
 function Admin() {
     const [tickets, setTickets] = useState([])
@@ -20,7 +20,7 @@ function Admin() {
             return
         }
 
-        fetch('http://127.0.0.1:8000/api/admin/tickets', {
+        apiFetch('http://127.0.0.1:8000/api/admin/tickets', {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
@@ -41,7 +41,7 @@ function Admin() {
             })
 
 
-        fetch('http://127.0.0.1:8000/api/admin/users', {
+        apiFetch('http://127.0.0.1:8000/api/admin/users', {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
@@ -67,7 +67,7 @@ function Admin() {
     function changeStatus(ticketId, status) {
         const token = localStorage.getItem('token')
 
-        fetch(`http://127.0.0.1:8000/api/admin/tickets/${ticketId}/status`, {
+        apiFetch(`http://127.0.0.1:8000/api/admin/tickets/${ticketId}/status`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
@@ -107,7 +107,7 @@ function Admin() {
     function changePriority(ticketId, priority) {
         const token = localStorage.getItem('token')
 
-        fetch(`http://127.0.0.1:8000/api/admin/tickets/${ticketId}/priority`, {
+        apiFetch(`http://127.0.0.1:8000/api/admin/tickets/${ticketId}/priority`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
@@ -147,7 +147,7 @@ function Admin() {
     function loadUsers() {
         const token = localStorage.getItem('token')
 
-        fetch('http://127.0.0.1:8000/api/admin/users', {
+        apiFetch('http://127.0.0.1:8000/api/admin/users', {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
@@ -178,7 +178,7 @@ function Admin() {
 
         const token = localStorage.getItem('token')
 
-        fetch(`http://127.0.0.1:8000/api/tickets/${ticketId}/comments`, {
+        apiFetch(`http://127.0.0.1:8000/api/tickets/${ticketId}/comments`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
@@ -201,22 +201,66 @@ function Admin() {
     }
 
 
-    function addComment(ticketId) {
-        if (!commentText.trim()) {
+        function addComment(ticketId) {
+            if (!commentText.trim()) {
+                return
+            }
+
+            const token = localStorage.getItem('token')
+
+            apiFetch(`http://127.0.0.1:8000/api/tickets/${ticketId}/comments`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    text: commentText
+                })
+            })
+                .then(res => {
+                    if (!res.ok) {
+                        return res.json().then(data => {
+                            throw new Error(data.detail)
+                        })
+                    }
+
+                    return res.json()
+                })
+                .then(() => {
+                    setCommentText('')
+
+                    return apiFetch(
+                        `http://127.0.0.1:8000/api/tickets/${ticketId}/comments`,
+                        {
+                            headers: {
+                                'Authorization': `Bearer ${token}`
+                            }
+                        }
+                    )
+                })
+                .then(res => res.json())
+                .then(data => {
+                    setComments(data)
+                })
+                .catch(err => {
+                    alert(err.message || 'Ошибка добавления комментария')
+                })
+        }
+        function deleteUser(userId) {
+        const answer = window.confirm('Удалить этого пользователя?')
+
+        if (!answer) {
             return
         }
 
         const token = localStorage.getItem('token')
 
-        fetch(`http://127.0.0.1:8000/api/tickets/${ticketId}/comments`, {
-            method: 'POST',
+        apiFetch(`http://127.0.0.1:8000/api/admin/users/${userId}`, {
+            method: 'DELETE',
             headers: {
-                'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify({
-                text: commentText
-            })
+            }
         })
             .then(res => {
                 if (!res.ok) {
@@ -228,23 +272,12 @@ function Admin() {
                 return res.json()
             })
             .then(() => {
-                setCommentText('')
-
-                return fetch(
-                    `http://127.0.0.1:8000/api/tickets/${ticketId}/comments`,
-                    {
-                        headers: {
-                            'Authorization': `Bearer ${token}`
-                        }
-                    }
+                setUsers(
+                    users.filter(user => user.id !== userId)
                 )
             })
-            .then(res => res.json())
-            .then(data => {
-                setComments(data)
-            })
             .catch(err => {
-                alert(err.message || 'Ошибка добавления комментария')
+                alert(err.message || 'Ошибка удаления пользователя')
             })
     }
 
@@ -552,6 +585,15 @@ function Admin() {
                                             ? 'Администратор'
                                             : 'Пользователь'}
                                     </div>
+                                    {user.role !== 'ADMIN' && (
+                                    <button
+                                        type="button"
+                                        className="deleteUserBtn"
+                                        onClick={() => deleteUser(user.id)}
+                                    >
+                                        Удалить
+                                    </button>
+                                )}
 
                                 </div>
                             ))
