@@ -21,7 +21,7 @@ function AddUserModal({ close, userAdded }) {
         return
     }
 
-    apiFetch('http://127.0.0.1:8000/api/admin/users', {
+    apiFetch('/api/admin/users', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

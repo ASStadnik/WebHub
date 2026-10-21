@@ -58,6 +58,38 @@ def checkAdmin(userData = Depends(checkToken)):
     return userData
 
 #Админские запросы
+@app.delete("/api/admin/tickets/{ticketId}")
+def deleteAdminTicket(
+    ticketId: int,
+    userData = Depends(checkAdmin)
+):
+    sess = dbSess()
+
+    ticket = sess.query(Ticket).filter(
+        Ticket.id == ticketId
+    ).first()
+
+    if ticket is None:
+        sess.close()
+        raise HTTPException(
+            status_code=404,
+            detail="Заявка не найдена"
+        )
+
+    comments = sess.query(Comment).filter(
+        Comment.ticketId == ticketId
+    ).all()
+
+    for comment in comments:
+        sess.delete(comment)
+
+    sess.delete(ticket)
+    sess.commit()
+    sess.close()
+
+    return {
+        "message": "Заявка удалена"
+    }
 
 @app.get("/api/admin/tickets")
 def getAdminTickets(userData = Depends(checkAdmin)):

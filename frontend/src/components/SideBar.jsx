@@ -38,7 +38,9 @@ function SideBar({ user, setUser }) {
 
                     <div className="userInfo">
                         <p className="userName">{user.name}</p>
-                        <span>{user.role}</span>
+                        <span>
+                            {user.role === 'ADMIN' ? 'Администратор' : 'Пользователь'}
+                        </span>
                     </div>
                     <button
                         type="button"

@@ -26,7 +26,7 @@ function ChangePassModal({ close }) {
         return
     }
 
-    apiFetch('http://127.0.0.1:8000/api/password', {
+    apiFetch('/api/password', {
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json',

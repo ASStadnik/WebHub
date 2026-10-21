@@ -11,7 +11,7 @@ function CreateTicket() {
     const [msg, setMsg] = useState('')
 
     useEffect(() => {
-        apiFetch('http://127.0.0.1:8000/api/categories')
+        apiFetch('/api/categories')
             .then(res => res.json())
             .then(data => setCats(data))
     }, [])
@@ -30,7 +30,7 @@ function CreateTicket() {
             return
         }
 
-        apiFetch('http://127.0.0.1:8000/api/tickets', {
+        apiFetch('/api/tickets', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

@@ -16,7 +16,7 @@ function MyTickets() {
             return
         }
 
-        apiFetch('http://127.0.0.1:8000/api/tickets', {
+        apiFetch('/api/tickets', {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
@@ -47,7 +47,7 @@ function MyTickets() {
 
         const token = localStorage.getItem('token')
 
-        apiFetch(`http://127.0.0.1:8000/api/tickets/${ticketId}`, {
+        apiFetch(`/api/tickets/${ticketId}`, {
             method: 'DELETE',
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -82,7 +82,7 @@ function MyTickets() {
 
         const token = localStorage.getItem('token')
 
-        apiFetch(`http://127.0.0.1:8000/api/tickets/${ticketId}/comments`, {
+        apiFetch(`/api/tickets/${ticketId}/comments`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
@@ -109,7 +109,7 @@ function MyTickets() {
 
     const token = localStorage.getItem('token')
 
-    apiFetch(`http://127.0.0.1:8000/api/tickets/${ticketId}/comments`, {
+    apiFetch(`/api/tickets/${ticketId}/comments`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -132,7 +132,7 @@ function MyTickets() {
             setCommentText('')
 
             return apiFetch(
-                `http://127.0.0.1:8000/api/tickets/${ticketId}/comments`,
+                `/api/tickets/${ticketId}/comments`,
                 {
                     headers: {
                         'Authorization': `Bearer ${token}`

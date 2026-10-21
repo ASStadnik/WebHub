@@ -20,7 +20,7 @@ function Admin() {
             return
         }
 
-        apiFetch('http://127.0.0.1:8000/api/admin/tickets', {
+        apiFetch('/api/admin/tickets', {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
@@ -41,7 +41,7 @@ function Admin() {
             })
 
 
-        apiFetch('http://127.0.0.1:8000/api/admin/users', {
+        apiFetch('/api/admin/users', {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
@@ -67,7 +67,7 @@ function Admin() {
     function changeStatus(ticketId, status) {
         const token = localStorage.getItem('token')
 
-        apiFetch(`http://127.0.0.1:8000/api/admin/tickets/${ticketId}/status`, {
+        apiFetch(`/api/admin/tickets/${ticketId}/status`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
@@ -107,7 +107,7 @@ function Admin() {
     function changePriority(ticketId, priority) {
         const token = localStorage.getItem('token')
 
-        apiFetch(`http://127.0.0.1:8000/api/admin/tickets/${ticketId}/priority`, {
+        apiFetch(`/api/admin/tickets/${ticketId}/priority`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
@@ -147,7 +147,7 @@ function Admin() {
     function loadUsers() {
         const token = localStorage.getItem('token')
 
-        apiFetch('http://127.0.0.1:8000/api/admin/users', {
+        apiFetch('/api/admin/users', {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
@@ -178,7 +178,7 @@ function Admin() {
 
         const token = localStorage.getItem('token')
 
-        apiFetch(`http://127.0.0.1:8000/api/tickets/${ticketId}/comments`, {
+        apiFetch(`/api/tickets/${ticketId}/comments`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
@@ -208,7 +208,7 @@ function Admin() {
 
             const token = localStorage.getItem('token')
 
-            apiFetch(`http://127.0.0.1:8000/api/tickets/${ticketId}/comments`, {
+            apiFetch(`/api/tickets/${ticketId}/comments`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -231,7 +231,7 @@ function Admin() {
                     setCommentText('')
 
                     return apiFetch(
-                        `http://127.0.0.1:8000/api/tickets/${ticketId}/comments`,
+                        `/api/tickets/${ticketId}/comments`,
                         {
                             headers: {
                                 'Authorization': `Bearer ${token}`
@@ -256,7 +256,7 @@ function Admin() {
 
         const token = localStorage.getItem('token')
 
-        apiFetch(`http://127.0.0.1:8000/api/admin/users/${userId}`, {
+        apiFetch(`/api/admin/users/${userId}`, {
             method: 'DELETE',
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -280,6 +280,39 @@ function Admin() {
                 alert(err.message || 'Ошибка удаления пользователя')
             })
     }
+    function deleteTicket(ticketId) {
+    const answer = window.confirm('Удалить эту заявку?')
+
+    if (!answer) {
+        return
+    }
+
+    const token = localStorage.getItem('token')
+
+    apiFetch(`/api/admin/tickets/${ticketId}`, {
+        method: 'DELETE',
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    })
+        .then(res => {
+            if (!res.ok) {
+                return res.json().then(data => {
+                    throw new Error(data.detail)
+                })
+            }
+
+            return res.json()
+        })
+        .then(() => {
+            setTickets(
+                tickets.filter(ticket => ticket.id !== ticketId)
+            )
+        })
+        .catch(err => {
+            alert(err.message || 'Ошибка удаления заявки')
+        })
+}
 
 
     return (
@@ -471,7 +504,13 @@ function Admin() {
                                         ? 'Скрыть комментарии'
                                         : 'Комментарии'}
                                 </button>
-
+                                <button
+                                    type="button"
+                                    className="deleteAdminTicketBtn"
+                                    onClick={() => deleteTicket(ticket.id)}
+                                >
+                                    Удалить заявку
+                                </button>
 
                                 {openTicketId === ticket.id && (
                                     <div className="adminComments">

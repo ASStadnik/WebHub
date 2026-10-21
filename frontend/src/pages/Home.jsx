@@ -13,7 +13,7 @@ function Home({ user }) {
             return
         }
 
-        apiFetch('http://127.0.0.1:8000/api/tickets', {
+        apiFetch('/api/tickets', {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
